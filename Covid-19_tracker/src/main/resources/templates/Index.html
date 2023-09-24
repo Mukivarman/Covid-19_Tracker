@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid-19 tracker</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+    
+</head>
+<body class="body">
+    <header>
+	<h1>Covid-19 Tracker</h1>        
+    </header>
+    <section>
+		 <br>
+        <div class="buttons">
+			<h2 >Stay Safe And Wear Mask</h2>
+			
+            <h1 th:text="'Total Deaths-'+${total}" style="background-color: ghostwhite;"></h1>
+            <br>
+            <h3>All Country Chart</h3>
+             <a th:href="@{/viewchart}"><button>ViewChart</button></a> <br>
+           <form th:action="@{/compare}" method="post">
+        <div id="selected">
+        </div>
+        <input type="hidden" value="" name="out" id="out">
+        <p>Select 2 countries to compare</p>
+       <button type="submit" disabled id="add">Compare</button>
+        </form>
+  
+        </div>
+        <br>
+        <table>
+            <thead>
+				<th>ID</th>
+                <th>Country</th>
+                <th>State</th>
+                <th>ToTal Death Reported</th>
+                <th>changes Since Last day</th>
+                <th>Compare</th>
+            </thead>
+            <tbody>
+                <tr th:each="data:${data}">
+					<td th:text="${data.lid}"></td>
+                    <td th:text="${data.country}"></td>
+                    <td th:text="${data.state}"></td>
+                    <td th:text="${data.latesttotal}"></td>
+                    <td th:text="${data.differfromprevay}"></td>
+                    <td>
+                        <button type="button" th:value="${data.lid}+'-'+${data.country}+'-'+${data.state}" class="compare-button">Compare</button>
+					</td>
+                   </tr>
+            </tbody>
+        </table>
+    </section>
+    <script>
+        let ad = new Set();
+        let buttons = document.querySelectorAll('.compare-button');
+        const sel = document.getElementById('selected');
+        const compareButton = document.getElementById('add');
+        const out=document.getElementById('out');
+        let o;
+	console.log(out)
+        buttons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                let b = button.value;
+                ad.add(b);
+                console.log(ad);
+
+                sel.innerHTML = ''; 
+                Array.from(ad).forEach((value) => {
+                    const c = document.createElement('div');
+                   
+                    c.textContent = value+"=> Click To Remove";
+                    c.className = 'country';
+                    c.addEventListener("click", function(event) {
+                        remove(event, value);
+                    });
+                    sel.appendChild(c);
+                });
+			o=out.value=Array.from(ad);
+				console.log(o);
+                removesubmit()
+            });
+            
+        });
+
+        function remove(event, value) {
+            ad.delete(value);
+            event.target.remove();
+            removesubmit()
+            console.log(o)
+        }
+function removesubmit() {
+    if (ad.size >= 2) {
+                    compareButton.disabled = false;
+                } else {
+                    compareButton.disabled = true;
+                }
+                
+}
+      
+    </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+ 	<script th:src="@{https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js}"></script>
+    <script th:src="@{https://code.jquery.com/jquery-3.6.0.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+</head>
+<body>
+	 <header>
+	<h1>Covid-19 Tracker</h1>        
+    </header>
+    
+	<div class="buttons">
+		<a th:href="@{/}"><button>Home</button></a><br>
+		<label>What you Want: top=?</label><br>
+		<input type="number" name="count" id="filter" onchange="filterby()"> 
+		<a href="#graph"><button type="submit">Submit</button></a>
+	</div>
+	
+	<div id="graph">
+	<canvas id="charts"></canvas>
+	</div> 
+	
+	
+	
+	
+	<script>
+			     let chart;
+		let url="http://localhost:8080/alldata"
+		function getdata(){
+			
+		 let country=[];
+			let count=[];
+			let color=[];
+			
+			$.ajax({
+				url:url,
+				method:"Get",
+				success:function(data){
+				
+					for(let i in data){
+						country.push(data[i].country);
+						count.push(data[i].latesttotal);
+						color.push(colors());
+					
+					}
+						console.log(country);
+		      console.log(count)
+		   
+			if(chart){
+				chart.destroy();
+			}
+		  chart=  new Chart("charts", {
+			  type: "bar",
+			  data: {
+			    labels:country,
+			    datasets: [{
+					label:"Total  Countrys",
+			      backgroundColor: color,
+			      data: count
+			    }]
+			  },
+			
+			});
+			function colors(){
+				let r=Math.floor(Math.random()*256);
+					let g=Math.floor(Math.random()*256);
+					let b=Math.floor(Math.random()*256);
+					return rgb="rgb("+r+","+g+","+b+")"
+					}
+				
+				},
+				error:function(data){
+					console.log(data)
+				}
+			})
+		};
+		getdata();
+	function filterby(){
+		const getid=document.getElementById('filter').value;
+		console.log(getid);
+		url=`http://localhost:8080/top=${getid}`
+		getdata();
+	};
+	
+	</script>
+	
+	<style>
+		body{
+			background-color: black;
+		}
+		#charts{
+			background-color: white;
+	}
+	</style>
+</body>
+</html>

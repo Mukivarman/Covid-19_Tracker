@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare</title>
+    <script th:src="@{https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js}"></script>
+	 <script th:src="@{https://code.jquery.com/jquery-3.6.0.min.js}"></script>
+     <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+</head>
+<body>
+	 <header>
+	<h1>Covid-19 Tracker</h1>        
+    </header>
+    
+	<div class="buttons">
+		<a th:href="@{/}"><button>Home</button></a><br>
+		
+	</div>
+	
+	<div id="graph">
+	<canvas id="charts"></canvas>
+	</div> 
+ <script th:inline="javascript">
+    let chart;
+    let country = [];
+    let count = [];
+    let color = [];
+    let data = /*[[${data}]]*/ []; 
+
+    function generateRandomColor() {
+        let r = Math.floor(Math.random()*256);
+        let g = Math.floor(Math.random()*256);
+        let b = Math.floor(Math.random()*256);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
+
+    function getdata() {
+        for (let i in data) {
+            country.push(data[i].country + "-" + data[i].state);
+            count.push(data[i].latesttotal);
+            color.push(generateRandomColor());
+        }
+
+        chart = new Chart("charts", {
+            type: "bar",
+            data: {
+                labels: country,
+                datasets: [{
+					label: 'Covid 19 List',
+                    backgroundColor: color, 
+                    data: count
+                }]
+            },
+        
+        });
+    }
+
+    getdata();
+</script>
+
+
+   <style>
+		body{
+			background-color: black;
+		}
+		#charts{
+			display: block;
+			background-color: white;
+			max-width: 1100px;
+			height: 80vh;
+			margin: auto;
+	}
+	</style>
+    
+</body>
+</html>
